@@ -1,44 +1,27 @@
-import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
-import { getBreeds } from "./services/dogsService";
+import { useBreeds } from "./hooks/useBreeds";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const {
+    allBreeds,
+    breedsPerPage: breeds,
+    isLoadingAllBreeds,
+    isLoadingSinglePage,
+  } = useBreeds();
 
-  useEffect(() => {
-    async function fetchDogImage(): Promise<unknown> {
-      return await getBreeds();
-    }
+  const isEmpty = breeds.length === 0;
 
-    fetchDogImage()
-      .then((data) => console.log(data))
-      .catch((error) => console.error(error));
-  }, []);
+  console.log(allBreeds.length);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {isLoadingSinglePage && <div>Loading very initial data</div>}
+      {!isLoadingSinglePage && isEmpty && <div>No breeds!</div>}
+      {breeds.length > 0 &&
+        breeds.map((breed) => (
+          <div key={breed.attributes.name}>{breed.attributes.name}</div>
+        ))}
+      {isLoadingAllBreeds && <div>Loading all breeds</div>}
     </>
   );
 }
